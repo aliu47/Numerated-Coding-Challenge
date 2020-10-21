@@ -12,8 +12,6 @@ from pytz import timezone
 # That their train is going. Finally the program will take this data and return the estimated time.
 
 # Object for Route
-
-
 class Route:
     def __init__(self, id, name, directions):
         super().__init__()
@@ -21,26 +19,28 @@ class Route:
         self.name = name
         self.directions = directions
 
+    def __eq__(self, other):
+        return self.id == other.id and self.name == other.name and self.directions == other.directions
+
 # Object for Stop
-
-
 class Stop:
     def __init__(self, id, name):
         super().__init__()
         self.id = id
         self.name = name
 
+    def __eq__(self, other):
+        return self.id == other.id and self.name == other.name
+
 # Object for Direction
-
-
 class Direction:
     def __init__(self, id, name):
         super().__init__()
         self.id = id
         self.name = name
 
-# Get the list of routes that are of heavy and light rail type
-
+    def __eq__(self, other):
+        return self.id == other.id and self.name == other.name
 
 class App:
     def main():
@@ -49,8 +49,8 @@ class App:
         route = App.selectRoute(routes)
         stops = App.getStops(route)
         stop = App.selectStop(stops)
-        directionId = App.selectDirection(route)
-        App.getPrediction(route, stop, directionId)
+        direction = App.selectDirection(route)
+        App.getPrediction(route, stop, direction)
 
     def getRoutes(railType):
         try:
@@ -78,6 +78,8 @@ class App:
             stops = dict()
             # add each stop object to the stops dictionary
             for data in r_dict['data']:
+                # print('"'+data["attributes"]["name"]+'":Stop("'+data["id"]+'","' +
+                #       data["attributes"]["name"]+'"),')
                 stops[data["attributes"]["name"]] = Stop(
                     data["id"], data["attributes"]["name"])
         except:
@@ -98,9 +100,9 @@ class App:
         # check each arrival prediction, keep track of the prediction that is closest to the current time that has not passed
         for data in r_dict['data']:
             # make sure that the arrival_time is not null
-            if(data["attributes"]["arrival_time"] != "null"):
-                arrivalTime = dateutil.parser.parse(
-                    data["attributes"]["arrival_time"])
+            if(data["attributes"]["arrival_time"] != None):
+                time = data["attributes"]["arrival_time"]
+                arrivalTime = dateutil.parser.parse(time)
                 temp = arrivalTime-currentTime
                 # check if the current arrival time is sooner than the last one stored
                 if((temp) < closestPrediction and temp.days >= 0):
@@ -110,11 +112,14 @@ class App:
                 exit()
         print("\nRoute: "+route.name+" | Stop: " +
               stop.name + " | Direction: "+direction.name)
+        # Something went wrong and the prediction did not change
         if(closestPrediction == datetime.timedelta.max):
             print("Sorry, this stop is unavailable at this time.")
+            return closestPrediction
         else:
             print("The train will be arriving in " +
                   str(int(closestPrediction.seconds/60))+" minutes")
+            return closestPrediction
 
     # Prompt user to select a route from the list and return the route selected
 
@@ -131,7 +136,7 @@ class App:
                 routeSelected = routes[routeName]
             except:
                 print("\nInvalid route")
-        return routeSelected
+            return routeSelected
 
     # Prompt user to select a stop from the list and return the stop selected
 
@@ -148,7 +153,7 @@ class App:
                 stopSelected = stops[stopName]
             except:
                 print("\nInvalid stop")
-        return stopSelected
+            return stopSelected
 
     # Prompt user to select a direction from the list and return the direction selected
 
@@ -160,15 +165,15 @@ class App:
             for direction in route.directions:
                 print(direction)
             print("Please select a direction: ")
+            directionName = input()
+            # get the id of the direction and convert it to string
             try:
-                directionName = input()
-                # get the id of the direction and convert it to string
                 directionId = route.directions.index(directionName)
                 directionId = str(directionId)
-                directionObject = Direction(directionId, directionName)
+                directionSelected = Direction(directionId, directionName)
             except:
                 print("\nInvalid direction")
-        return directionObject
+            return directionSelected
 
 
 # Run the program
