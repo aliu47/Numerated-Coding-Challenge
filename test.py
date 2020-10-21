@@ -3,6 +3,9 @@ from unittest import mock
 from unittest import TestCase
 from Numerated_Challenge import App, Route, Stop, Direction
 import Numerated_Challenge
+import datetime
+import dateutil.parser
+from pytz import timezone
 
 
 class Tests(TestCase):
@@ -38,6 +41,8 @@ class Tests(TestCase):
                 "Quincy Adams": Stop("place-qamnl", "Quincy Adams"),
                 "Braintree": Stop("place-brntn", "Braintree")}
     route = Route("Red", "Red Line", ["South", "North"])
+    currentTime = datetime.datetime.now(timezone("US/Eastern"))
+    testTime = "2020-10-21T11:13:37-04:00"
 
     def test_Route(self):
         route2 = Route("Red", "Red Line", ["South", "North"])
@@ -58,8 +63,11 @@ class Tests(TestCase):
         route = self.route
         stop = Stop("place-alfcl", "Alewife")
         direction = Direction("1", "North")
+        testTime = dateutil.parser.parse(self.testTime)
+        testPrediction = testTime-self.currentTime
+        test = int(testPrediction.seconds/60)
         result = App.getPrediction(route, stop, direction)
-        self.assertEqual(result, result)
+        self.assertEqual(result, test)
 
     @mock.patch('Numerated_Challenge.input', create=True)
     def test_selectRoute(self, mocked_input):
@@ -77,7 +85,6 @@ class Tests(TestCase):
         result = App.selectDirection(self.route)
         self.assertEqual(result.id, test.id)
         self.assertEqual(result.name, test.name)
-
 
     @mock.patch('Numerated_Challenge.input', create=True)
     def test_selectStop(self, mocked_input):

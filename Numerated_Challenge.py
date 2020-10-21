@@ -115,11 +115,11 @@ class App:
         # Something went wrong and the prediction did not change
         if(closestPrediction == datetime.timedelta.max):
             print("Sorry, this stop is unavailable at this time.")
-            return closestPrediction
+            return int(closestPrediction.seconds/60)
         else:
             print("The train will be arriving in " +
                   str(int(closestPrediction.seconds/60))+" minutes")
-            return closestPrediction
+            return int(closestPrediction.seconds/60)
 
     # Prompt user to select a route from the list and return the route selected
 
