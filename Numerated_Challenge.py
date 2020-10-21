@@ -5,13 +5,15 @@ import dateutil.parser
 from pytz import timezone
 # Title: Numerated Coding Challenge
 # Author: Andrew Liu
-# giDate: 10/21/2020
+# Date: 10/21/2020
 # Description: Find the next departing train for a particular stop on the MBTA T network.
 # First the program asks the user to select a route from a list of routes.
 # Next the user selects a stop that is on the route. Next the user selects the direction
 # That their train is going. Finally the program will take this data and return the estimated time.
 
 # Object for Route
+
+
 class Route:
     def __init__(self, id, name, directions):
         super().__init__()
@@ -23,6 +25,8 @@ class Route:
         return self.id == other.id and self.name == other.name and self.directions == other.directions
 
 # Object for Stop
+
+
 class Stop:
     def __init__(self, id, name):
         super().__init__()
@@ -33,6 +37,8 @@ class Stop:
         return self.id == other.id and self.name == other.name
 
 # Object for Direction
+
+
 class Direction:
     def __init__(self, id, name):
         super().__init__()
@@ -41,6 +47,7 @@ class Direction:
 
     def __eq__(self, other):
         return self.id == other.id and self.name == other.name
+
 
 class App:
     def main():
@@ -136,7 +143,7 @@ class App:
                 routeSelected = routes[routeName]
             except:
                 print("\nInvalid route")
-            return routeSelected
+        return routeSelected
 
     # Prompt user to select a stop from the list and return the stop selected
 
@@ -153,7 +160,7 @@ class App:
                 stopSelected = stops[stopName]
             except:
                 print("\nInvalid stop")
-            return stopSelected
+        return stopSelected
 
     # Prompt user to select a direction from the list and return the direction selected
 
@@ -173,7 +180,7 @@ class App:
                 directionSelected = Direction(directionId, directionName)
             except:
                 print("\nInvalid direction")
-            return directionSelected
+        return directionSelected
 
 
 # Run the program
